@@ -1,0 +1,80 @@
+#Завдання 4 
+
+from __future__ import annotations
+
+
+def parse_input(user_input: str) -> tuple[str, list[str]]:
+    parts = user_input.strip().split()
+    if not parts:
+        return "", []
+    cmd = parts[0].strip().lower()
+    args = parts[1:]
+    return cmd, args
+
+
+def add_contact(args: list[str], contacts: dict[str, str]) -> str:
+    if len(args) != 2:
+        return "Usage: add <name> <phone>"
+    name, phone = args
+    contacts[name] = phone
+    return "Contact added."
+
+
+def change_contact(args: list[str], contacts: dict[str, str]) -> str:
+    if len(args) != 2:
+        return "Usage: change <name> <new_phone>"
+    name, new_phone = args
+    if name not in contacts:
+        return "Error: contact not found."
+    contacts[name] = new_phone
+    return "Contact updated."
+
+
+def show_phone(args: list[str], contacts: dict[str, str]) -> str:
+    if len(args) != 1:
+        return "Usage: phone <name>"
+    name = args[0]
+    if name not in contacts:
+        return "Error: contact not found."
+    return contacts[name]
+
+
+def show_all(contacts: dict[str, str]) -> str:
+    if not contacts:
+        return "No contacts."
+    lines = []
+    for name in sorted(contacts):
+        lines.append(f"{name}: {contacts[name]}")
+    return "\n".join(lines)
+
+
+def main() -> None:
+    contacts: dict[str, str] = {}
+    print("Welcome to the assistant bot!")
+
+    while True:
+        user_input = input("Enter a command: ")
+        command, args = parse_input(user_input)
+
+        if command in ("close", "exit"):
+            print("Good bye!")
+            break
+
+        if command == "":
+            print("Invalid command.")
+        elif command == "hello":
+            print("How can I help you?")
+        elif command == "add":
+            print(add_contact(args, contacts))
+        elif command == "change":
+            print(change_contact(args, contacts))
+        elif command == "phone":
+            print(show_phone(args, contacts))
+        elif command == "all":
+            print(show_all(contacts))
+        else:
+            print("Invalid command.")
+
+
+if __name__ == "__main__":
+    main()
