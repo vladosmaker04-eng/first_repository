@@ -1,0 +1,52 @@
+#Завдання 3 
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+from colorama import Fore, Style, init
+
+
+def print_tree(path: Path, prefix: str = "") -> None:
+    """
+    Recursively prints directory structure.
+    Directories are one color, files are another.
+    """
+    items = sorted(path.iterdir(), key=lambda p: (p.is_file(), p.name.lower()))
+
+    for idx, item in enumerate(items):
+        is_last = idx == len(items) - 1
+        branch = "└─ " if is_last else "├─ "
+        new_prefix = prefix + ("   " if is_last else "│  ")
+
+        if item.is_dir():
+            print(prefix + branch + Fore.CYAN + item.name + Style.RESET_ALL)
+            print_tree(item, new_prefix)
+        else:
+            print(prefix + branch + Fore.GREEN + item.name + Style.RESET_ALL)
+
+
+def main() -> None:
+    init(autoreset=True)
+
+    if len(sys.argv) < 2:
+        print("Usage: python task3.py /path/to/directory")
+        sys.exit(1)
+
+    dir_path = Path(sys.argv[1])
+
+    if not dir_path.exists():
+        print(Fore.RED + "Error: path does not exist." + Style.RESET_ALL)
+        sys.exit(1)
+
+    if not dir_path.is_dir():
+        print(Fore.RED + "Error: path is not a directory." + Style.RESET_ALL)
+        sys.exit(1)
+
+    print(Fore.MAGENTA + f"📦 {dir_path.name}" + Style.RESET_ALL)
+    print_tree(dir_path)
+
+
+if __name__ == "__main__":
+    main()
